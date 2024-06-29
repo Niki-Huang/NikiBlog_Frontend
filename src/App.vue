@@ -35,10 +35,16 @@
     .theme_light {
         color: @dark;
         background-color: @day;
+        input {
+            color: @dark;
+        }
     }
     .theme_dark {
         color: @day;
         background-color: @dark;
+        input {
+            color: @day;
+        }
     }
     // 字体
     :root {
