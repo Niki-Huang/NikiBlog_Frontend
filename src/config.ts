@@ -1,5 +1,7 @@
+const ip = "192.168.2.108"
+
 const SERVERCONFIG = {
-    PATH: "http://localhost:4400/",
+    PATH: `http://${ip}:4400/`,
 };
 
 export { SERVERCONFIG };

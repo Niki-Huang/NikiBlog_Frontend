@@ -6,7 +6,7 @@
                 <input
                     id="title"
                     type="text"
-                    value=""
+                    v-model="titleText"
                     placeholder="Name the title for your ariticle"
                 />
             </div>
@@ -29,12 +29,14 @@
 
 <script setup name="blog">
     /* 引入 */
-    import { ref } from "vue";
-    import { useRoute } from "vue-router";
+    import { ref, watch } from "vue";
+    import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
     import { MdEditor } from "md-editor-v3";
     import { useThemeStore } from "@/store/theme";
     import myaxios from "@/utils/myaxios";
     import emitter from "@/utils/emitter";
+    import toast from "@/utils/toast";
+    import router from "@/router";
 
     /* 实例 */
     const route = useRoute();
@@ -45,6 +47,7 @@
     let status = ref(route.query.status);
 
     /* 自定义变量 */
+    let titleText = ref("");
     let markdownText = ref("");
     let theme_style = ref(themeStore.theme_style);
 
@@ -57,35 +60,57 @@
     // 保存博文
     async function saveFile() {
         try {
-            let result = await myaxios.post("blogs/save", {
+            if (titleText.value.trim() == "") throw "标题不能为空";
+            else if (markdownText.value.trim() == "") throw "文章内容不能为空";
+            await myaxios.post("blogs/save", {
                 bid: bid.value,
+                title: titleText.value,
                 content: markdownText.value,
             });
-            alert("保存成功！");
-        } catch (e) {
-            alert("保存失败");
+            status.value = "saved";
+            toast.success("Success to save");
+            router.push("/blog");
+        } catch (err) {
+            toast.error(err);
         }
     }
+
     // 上传图片
     async function savePic(files, callback) {
-        if (files.length > 1) {
-            alert("一次只能传一张图片");
-            return;
-        }
-        const file = files[0];
-        const form = new FormData();
-        form.append("file", file);
         try {
-            const res = await myaxios.post("imgs/save", form, {
+            if (files.length > 1) throw "一次只能传一张图片";
+            const file = files[0];
+            const form = new FormData();
+            form.append("file", file);
+            const res = await myaxios.post(`imgs/save/${bid.value}`, form, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            callback([res.data.url]);
-        } catch (error) {
-            console.error("图片上传失败：", error);
+            callback([res.url]);
+            toast.success("图片上传成功");
+        } catch (err) {
+            toast.error(err);
         }
     }
+
+    /* 路由守卫 */
+    onBeforeRouteLeave(async (to, from, next) => {
+        if (to.fullPath !== "/write" && status.value == "unsaved") {
+            if (
+                confirm(
+                    "You haven't saved your ariticle yet, do you still wanna leave?"
+                )
+            ) {
+                try {
+                    await myaxios.delete(`blogs/record/${bid.value}`);
+                    next();
+                } catch (err) {
+                    alert(err);
+                }
+            }
+        } else next();
+    });
 </script>
 
 <style scoped lang="less">

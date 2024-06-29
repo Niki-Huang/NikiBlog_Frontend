@@ -9,13 +9,20 @@
 </template>
 
 <script setup>
+    /* 引入 */
     import { ref, watch, onMounted } from "vue";
     import { useRoute } from "vue-router";
+
+    /* 实例 */
     const route = useRoute();
+
+    /* 自定义变量 */
     const leaveclass1 = ref("");
     const leaveclass2 = ref("");
     const leaveclass3 = ref("");
     const animateclass = ref("");
+
+    /* 监视 */
     watch(
         () => route.path,
         (newValue, oldValue) => {
@@ -30,6 +37,8 @@
             }
         }
     );
+
+    /* 生命钩子 */
     onMounted(() => {
         if (route.path == "/") {
             leaveclass1.value = leaveclass2.value = leaveclass3.value = "";
