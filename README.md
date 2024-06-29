@@ -3,4 +3,4 @@
 2、flex会向下传递
 
 警告报错
-1、ts7016：将env.d.ts移动到src下再编写一些代码
+1、ts7016：将env.d.ts移动到components/下再编写一些代码

@@ -47,11 +47,11 @@
     /* 事件 */
     // 编程式导航
     async function gotta(where: string) {
-        const { data: res } = await myaxios.post("blogs/newRecord");
-        const bid = res.data.bid;
+        // const { data: res } = await myaxios.post("blogs/newRecord");
+        // const bid = res.data.bid;
         router.push({
             path: where,
-            query: { bid, status: "unsaved" },
+            // query: { bid, status: "unsaved" },
         });
     }
 </script>

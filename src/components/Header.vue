@@ -33,22 +33,33 @@
     /* 引入 */
     import { ref } from "vue";
     import { useRouter } from "vue-router";
+    import { useThemeStore } from "@/store/theme";
+    import emitter from "@/utils/emitter";
 
-    /* 库函数实例 */
-    const emit = defineEmits();
+    /* 自定义变量 */
+    const theIcon = ref("#icon-moon");
+
+    /* 实例 */
+    const emit = defineEmits(["changeTheme"]);
     const router = useRouter();
-    
+    const themeStore = useThemeStore();
+
     /* 事件 */
     // 编程式导航
     function gotta(where: string) {
         router.push({ path: where });
     }
     // 主题切换
-    const theIcon = ref("#icon-moon");
     function changmode() {
+        if (theIcon.value === "#icon-sun") {
+            theIcon.value = "#icon-moon";
+            emitter.emit("changeThemeForOnline", "dark");
+        } else {
+            theIcon.value = "#icon-sun";
+            emitter.emit("changeThemeForOnline", "light");
+        }
         emit("changeTheme");
-        theIcon.value =
-            theIcon.value === "#icon-sun" ? "#icon-moon" : "#icon-sun";
+        themeStore.changeThemeForCreating();
     }
 </script>
 
