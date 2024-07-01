@@ -40,7 +40,6 @@
     const theIcon = ref("#icon-moon");
 
     /* 实例 */
-    const emit = defineEmits(["changeTheme"]);
     const router = useRouter();
     const themeStore = useThemeStore();
 
@@ -51,14 +50,8 @@
     }
     // 主题切换
     function changmode() {
-        if (theIcon.value === "#icon-sun") {
-            theIcon.value = "#icon-moon";
-            emitter.emit("changeThemeForOnline", "dark");
-        } else {
-            theIcon.value = "#icon-sun";
-            emitter.emit("changeThemeForOnline", "light");
-        }
-        emit("changeTheme");
+        if (theIcon.value === "#icon-sun") theIcon.value = "#icon-moon";
+        else theIcon.value = "#icon-sun";
         themeStore.changeThemeForCreating();
     }
 </script>
@@ -77,7 +70,7 @@
         top: 0px;
         left: 0px;
         right: 0px;
-        z-index: 999;
+        z-index: 996;
         transition: 0.2s all linear;
     }
     .container {

@@ -36,7 +36,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
     /* 引入 */
     import { useRouter } from "vue-router";
     import myaxios from "@/utils/myaxios";
@@ -46,13 +46,13 @@
 
     /* 事件 */
     // 编程式导航
-    async function gotta(where: string) {
+    async function gotta(where) {
         try {
             const { data } = await myaxios.post("blogs/newRecord");
             const bid = data.bid;
             router.push({
                 path: where,
-                query: { bid, status: "unsaved" },
+                query: { bid },
             });
         } catch (err) {
             alert(err);

@@ -1,5 +1,5 @@
 <template>
-    <Header @changeTheme="changeTheme"></Header>
+    <Header></Header>
     <RouterView></RouterView>
     <Footer></Footer>
 </template>
@@ -9,17 +9,6 @@
     import { ref } from "vue";
     import Header from "@/components/Header.vue";
     import Footer from "@/components/Footer.vue";
-
-    /* 变量 */
-    let theme = ref("theme_dark");
-
-    /* 自定义事件的回调 */
-    // 切换主题
-    function changeTheme() {
-        theme.value =
-            theme.value === "theme_light" ? "theme_dark" : "theme_light";
-        document.documentElement.className = theme.value;
-    }
 </script>
 
 <style lang="less">
@@ -32,17 +21,19 @@
         overflow: hidden;
     }
     // 主题色
-    .theme_light {
+    .light {
         color: @dark;
         background-color: @day;
-        input {
+        input,
+        button {
             color: @dark;
         }
     }
-    .theme_dark {
+    .dark {
         color: @day;
         background-color: @dark;
-        input {
+        input,
+        button {
             color: @day;
         }
     }

@@ -1,8 +1,8 @@
 import iziToast from 'izitoast'
 
 const config = {
-    titleSize: '30px',
-    messageSize: '30px',
+    titleSize: '20px',
+    messageSize: '20px',
     titleLineHeight: '1.5',
     messageLineHeight: '1.5',
     timeout: 5000

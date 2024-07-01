@@ -9,7 +9,10 @@ export const useThemeStore = defineStore(
             }
         },
         actions: {
-            changeThemeForCreating() { this.theme_style = this.theme_style === 'dark' ? 'light' : 'dark' }
+            changeThemeForCreating() {
+                this.theme_style = this.theme_style === 'dark' ? 'light' : 'dark'
+                document.documentElement.className = this.theme_style
+            }
         }
     }
 )
