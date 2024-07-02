@@ -7,7 +7,7 @@
                 </svg>
                 <input type="text" value="" />
             </div>
-            <div class="right" @click="gotta('/write')">Publish</div>
+            <div class="right" @click="gottaWrite()">Publish</div>
         </div>
         <div class="tags">
             <div class="tag">ALL</div>
@@ -20,44 +20,82 @@
             <div class="tag">other</div>
         </div>
         <div class="cards">
-            <div class="card">
-                <img src="@/assets/imgs/mysql.jpg" alt="" />
+            <div
+                v-for="(blog, index) in blogs_info"
+                :key="index"
+                class="card"
+                @click="gottaDetail(blog)"
+            >
+                <img :src="blog.coverUrl" alt="" />
                 <div class="infos">
-                    <div class="title">Data Fetch in Nuxt.js</div>
-                    <div class="viewer">15 views</div>
-                    <div class="datetime">February 10,2024</div>
-                    <div class="description">
-                        要让文本最多显示三行，超出的部分采用省略号，可以使用 CSS
-                        的 line-clamp 技术。这个技术在现代浏览器中广泛支持
+                    <div class="title">{{ blog.title }}</div>
+                    <div class="secondline">
+                        <div class="datetime">
+                            {{ formatTime(blog.createTime) }}
+                        </div>
+                        <div class="viewer">
+                            <svg class="icon" aria-hidden="true">
+                                <use xlink:href="#icon-liulan"></use>
+                            </svg>
+                            <span>
+                                {{ blog.viewCount }}
+                            </span>
+                        </div>
                     </div>
+                    <div class="description">概要：{{ blog.description }}</div>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup name="Blog">
     /* 引入 */
     import { useRouter } from "vue-router";
     import myaxios from "@/utils/myaxios";
+    import formatTime from "@/utils/time";
+    import { ref, reactive, onMounted } from "vue";
+    import toast from "@/utils/toast";
 
-    /* 库函数实例 */
+    /* 实例 */
     const router = useRouter();
+
+    /* 自定义变量 */
+    const blogs_info = ref([]);
 
     /* 事件 */
     // 编程式导航
-    async function gotta(where) {
+    async function gottaWrite() {
         try {
             const { data } = await myaxios.post("blogs/newRecord");
             const bid = data.bid;
             router.push({
-                path: where,
+                path: "/write",
                 query: { bid },
             });
         } catch (err) {
             alert(err);
         }
     }
+    function gottaDetail(bloginfo) {
+        router.push({
+            name: "Detail",
+            params: {
+                bloginfo: JSON.stringify(bloginfo),
+            },
+        });
+    }
+
+    /* 生命钩子 */
+    onMounted(async () => {
+        try {
+            const res = await myaxios.get("blogs/all");
+            blogs_info.value = res.data.blogsinfo;
+            toast.success("加载成功");
+        } catch (err) {
+            toast.error(err);
+        }
+    });
 </script>
 
 <style scoped lang="less">
@@ -112,77 +150,86 @@
                 }
             }
         }
-    }
-    .tags {
-        width: 100%;
-        margin-top: 20px;
-        display: flex;
-        justify-content: flex-start;
-        div {
-            border: 1px solid gray;
-            padding: 8px;
-            border-radius: 8px;
-            margin-right: 10px;
-        }
-    }
-    .cards {
-        width: 100%;
-        margin-top: 20px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        .card {
-            box-sizing: border-box;
-            width: 32%;
-            margin-bottom: 10px;
-            border: 4px solid rgb(182, 182, 182);
-            border-radius: 6px;
-            transition: 0.2s all linear;
-            &:hover {
-                box-shadow: 0px 0px 20px 4px;
-                transform: scale(1.04);
-                cursor: pointer;
-            }
-            img {
-                position: relative;
-                width: 100%;
-            }
-        }
-        .infos {
-            padding: 10px 20px;
+        .tags {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-start;
             div {
-                padding: 2px;
+                border: 1px solid gray;
+                padding: 8px;
+                border-radius: 8px;
+                margin-right: 10px;
             }
-            .title {
-                font-size: 22px;
-                font-weight: 900;
-                background-image: linear-gradient(
-                    to top right,
-                    @indigo,
-                    @orange 40px
-                );
-                color: transparent;
-                background-clip: text;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
+        }
+        .cards {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            .card {
+                box-sizing: border-box;
+                width: 32%;
+                margin: 0px 7px 10px;
+                border: 1px solid rgb(182, 182, 182);
+                border-radius: 6px;
+                transition: 0.2s all linear;
+                &:hover {
+                    box-shadow: 0px 0px 20px 4px;
+                    transform: scale(1.04);
+                    cursor: pointer;
+                }
+                img {
+                    position: relative;
+                    width: 100%;
+                }
             }
-            .viewer {
-                font-size: 18px;
-                font-weight: 700;
-            }
-            .datetime {
-                font-size: 18px;
-                font-weight: 900;
-            }
-            .description {
-                font-size: 15px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: normal;
-                display: -webkit-box;
-                -webkit-box-orient: vertical;
-                -webkit-line-clamp: 3; /* 最多显示三行 */
+            .infos {
+                padding: 10px 20px;
+                div {
+                    padding: 2px;
+                }
+                .title {
+                    font-size: 22px;
+                    font-weight: 900;
+                    background-image: linear-gradient(
+                        to top right,
+                        @indigo,
+                        @orange 40px
+                    );
+                    color: transparent;
+                    background-clip: text;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+                .secondline {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    .datetime {
+                        font-size: 18px;
+                        font-weight: 900;
+                    }
+                    .viewer {
+                        display: flex;
+                        align-items: center;
+                        font-size: 18px;
+                        font-weight: 700;
+                        span {
+                            margin-left: 10px;
+                        }
+                    }
+                }
+                .description {
+                    font-size: 18px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: normal;
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 3; /* 最多显示三行 */
+                }
             }
         }
     }

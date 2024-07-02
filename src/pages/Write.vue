@@ -26,11 +26,6 @@
             :onSubmit="saveBlog"
             :addPic="addPic"
         />
-        <!-- <MdPreview
-            preview-theme="default"
-            editor-id="preview"
-            v-model="markdownText"
-        /> -->
     </div>
 </template>
 
@@ -84,7 +79,6 @@
             // 解析数据
             const { tags, type, permission, status, description } = formData;
             // 数据处理、判断
-            // 将数组转为字符串存储
             const tags_str = formData.tags.join("|");
             if (description > 255) {
                 toast.error("描述信息太长了");
@@ -137,7 +131,7 @@
 
     /* 路由守卫 */
     onBeforeRouteLeave(async (to, from, next) => {
-        if (to.fullPath !== "/write" && !isSave) {
+        if (to.fullPath !== "/write" && !isSave.value) {
             if (
                 confirm(
                     "You haven't saved your ariticle yet, do you still wanna leave?"
@@ -145,7 +139,8 @@
             ) {
                 try {
                     await myaxios.delete(`blogs/record/${bid.value}`);
-                    await myaxios.post(`imgs/picsDel`, { picsUrl });
+                    if (picsUrl.length > 0)
+                        await myaxios.post(`imgs/picsDel`, { picsUrl });
                     next();
                 } catch (err) {
                     alert(err);
@@ -218,7 +213,4 @@
     .md-editor div.cm-line {
         font-family: "微软雅黑" !important;
     }
-    /* .md-editor-preview *:not(a,code, code *) {
-        color: white !important;
-    } */
 </style>
