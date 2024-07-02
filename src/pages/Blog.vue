@@ -26,7 +26,9 @@
                 class="card"
                 @click="gottaDetail(blog)"
             >
-                <img :src="blog.coverUrl" alt="" />
+                <div class="cover">
+                    <img :src="blog.coverUrl" alt="" />
+                </div>
                 <div class="infos">
                     <div class="title">{{ blog.title }}</div>
                     <div class="secondline">
@@ -168,67 +170,85 @@
             display: flex;
             flex-wrap: wrap;
             .card {
+                display: flex;
+                flex-wrap: wrap;
                 box-sizing: border-box;
                 width: 32%;
                 margin: 0px 7px 10px;
                 border: 1px solid rgb(182, 182, 182);
                 border-radius: 6px;
                 transition: 0.2s all linear;
+                overflow: hidden; // 确保超出部分被隐藏
                 &:hover {
                     box-shadow: 0px 0px 20px 4px;
                     transform: scale(1.04);
                     cursor: pointer;
                 }
-                img {
-                    position: relative;
+                .cover {
                     width: 100%;
-                }
-            }
-            .infos {
-                padding: 10px 20px;
-                div {
-                    padding: 2px;
-                }
-                .title {
-                    font-size: 22px;
-                    font-weight: 900;
-                    background-image: linear-gradient(
-                        to top right,
-                        @indigo,
-                        @orange 40px
-                    );
-                    color: transparent;
-                    background-clip: text;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                }
-                .secondline {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    .datetime {
-                        font-size: 18px;
-                        font-weight: 900;
+                    position: relative; // 确保 img 的绝对定位相对于 cover
+                    padding-top: 56.25%; // 16:9 的比例，可以根据需要调整
+                    img {
+                        position: absolute;
+                        // 让图片填满整个框
+                        width: 100%;
+                        height: 100%;
+                        // 左上角与框中心对齐
+                        top: 50%;
+                        left: 50%;
+                        // 再左移、上移自身的百分之五十，使图片中心与框中心对齐
+                        transform: translate(-50%, -50%);
+                        // 图片采用填充，宁可超出不要挤压，保持原来的比例
+                        object-fit: cover;
+                        // object-position: center;
                     }
-                    .viewer {
+                }
+                .infos {
+                    padding: 10px 20px;
+                    div {
+                        padding: 2px;
+                    }
+                    .title {
+                        font-size: 22px;
+                        font-weight: 900;
+                        background-image: linear-gradient(
+                            to top right,
+                            @indigo,
+                            @orange 40px
+                        );
+                        color: transparent;
+                        background-clip: text;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        text-overflow: ellipsis;
+                    }
+                    .secondline {
                         display: flex;
+                        justify-content: space-between;
                         align-items: center;
-                        font-size: 18px;
-                        font-weight: 700;
-                        span {
-                            margin-left: 10px;
+                        .datetime {
+                            font-size: 18px;
+                            font-weight: 900;
+                        }
+                        .viewer {
+                            display: flex;
+                            align-items: center;
+                            font-size: 18px;
+                            font-weight: 700;
+                            span {
+                                margin-left: 10px;
+                            }
                         }
                     }
-                }
-                .description {
-                    font-size: 18px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: normal;
-                    display: -webkit-box;
-                    -webkit-box-orient: vertical;
-                    -webkit-line-clamp: 3; /* 最多显示三行 */
+                    .description {
+                        font-size: 18px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: normal;
+                        display: -webkit-box;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 3; /* 最多显示三行 */
+                    }
                 }
             }
         }

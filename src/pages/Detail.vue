@@ -166,6 +166,7 @@
         background-color: gray + 33;
     }
     .type_feature {
+        background-color: rgb(228, 133, 116);
     }
 </style>
 
