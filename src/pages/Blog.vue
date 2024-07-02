@@ -5,7 +5,11 @@
                 <svg class="icon" aria-hidden="true">
                     <use xlink:href="#icon-sousuo"></use>
                 </svg>
-                <input type="text" value="" />
+                <input
+                    type="text"
+                    v-model="blog_name"
+                    placeholder="Print the blog's name that you wanna find"
+                />
             </div>
             <div class="right" @click="gottaWrite()">Publish</div>
         </div>
@@ -24,7 +28,10 @@
         <div class="cards">
             <div
                 v-for="(blog, index) in blogs_info"
-                v-show="blog.tags.includes(selected_tag)"
+                v-show="
+                    blog.tags.includes(selected_tag) &&
+                    blog.title.includes(blog_name)
+                "
                 :key="index"
                 class="card"
                 @click="gottaDetail(blog)"
@@ -66,10 +73,11 @@
     const router = useRouter();
 
     /* 自定义变量 */
-    const blogs_info = ref([]);
+    let blogs_info = ref([]);
     let tags_obj = reactive({});
     let tags_sort_arr = ref([]);
-    const selected_tag = ref("");
+    let selected_tag = ref("");
+    let blog_name = ref("");
 
     /* 事件 */
     // 编程式导航
