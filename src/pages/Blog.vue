@@ -10,20 +10,21 @@
             <div class="right" @click="gottaWrite()">Publish</div>
         </div>
         <div class="tags">
-            Hot tags:
-            <div class="tag">ALL</div>
-            <div class="tag">Vue</div>
-            <div class="tag">Less</div>
-            <div class="tag">MySQL</div>
-            <div class="tag">Redis</div>
-            <div class="tag">Docker</div>
-            <div class="tag">TypeScript</div>
-            <div class="tag">other</div>
+            <span>Hot tags:</span>
+            <div class="tag" @click="selected_tag = ''">ALL</div>
+            <div
+                class="tag"
+                v-for="(tag, index) in tags_sort_arr"
+                :key="index"
+                @click="selected_tag = tag"
+            >
+                {{ tag }}
+            </div>
         </div>
         <div class="cards">
             <div
                 v-for="(blog, index) in blogs_info"
-                v-show="blog.tags.includes(tag)"
+                v-show="blog.tags.includes(selected_tag)"
                 :key="index"
                 class="card"
                 @click="gottaDetail(blog)"
@@ -66,8 +67,9 @@
 
     /* 自定义变量 */
     const blogs_info = ref([]);
-    const tag_arr = reactive({});
-    const tag = ref("");
+    let tags_obj = reactive({});
+    let tags_sort_arr = ref([]);
+    const selected_tag = ref("");
 
     /* 事件 */
     // 编程式导航
@@ -98,6 +100,19 @@
         try {
             const res = await myaxios.get("blogs/all");
             blogs_info.value = res.data.blogsinfo;
+            blogs_info.value.forEach((blog) => {
+                const tag_str = blog.tags;
+                const tag_arr = tag_str.split("|");
+                tag_arr.forEach((tag) => {
+                    if (tag in tags_obj) tags_obj[tag]++;
+                    else tags_obj[tag] = 1;
+                });
+            });
+            tags_sort_arr.value = Object.keys(tags_obj)
+                .sort(function (a, b) {
+                    return tags_obj[b] - tags_obj[a];
+                })
+                .slice(0, 11);
             toast.success("加载成功");
         } catch (err) {
             toast.error(err);
@@ -178,6 +193,11 @@
                     @orange
                 );
                 background-clip: text;
+                cursor: pointer;
+            }
+            span,
+            div {
+                margin-bottom: 10px;
             }
         }
         .cards {
