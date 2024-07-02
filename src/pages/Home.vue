@@ -56,10 +56,10 @@
     </div>
 </template>
 
-<script setup lang="ts" name="Home">
+<script setup name="Home">
     /* 事件 */
     // 警告
-    function ale(msg: string) {
+    function ale(msg) {
         alert(msg);
     }
 </script>

@@ -10,6 +10,7 @@
             <div class="right" @click="gottaWrite()">Publish</div>
         </div>
         <div class="tags">
+            Hot tags:
             <div class="tag">ALL</div>
             <div class="tag">Vue</div>
             <div class="tag">Less</div>
@@ -22,6 +23,7 @@
         <div class="cards">
             <div
                 v-for="(blog, index) in blogs_info"
+                v-show="blog.tags.includes(tag)"
                 :key="index"
                 class="card"
                 @click="gottaDetail(blog)"
@@ -64,6 +66,8 @@
 
     /* 自定义变量 */
     const blogs_info = ref([]);
+    const tag_arr = reactive({});
+    const tag = ref("");
 
     /* 事件 */
     // 编程式导航
@@ -79,6 +83,7 @@
             alert(err);
         }
     }
+    // 编程式导航
     function gottaDetail(bloginfo) {
         router.push({
             name: "Detail",
@@ -157,11 +162,22 @@
             margin-top: 20px;
             display: flex;
             justify-content: flex-start;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 20px;
+            font-weight: 900;
             div {
-                border: 1px solid gray;
+                border: 1px dashed gray;
                 padding: 8px;
                 border-radius: 8px;
-                margin-right: 10px;
+                margin-left: 12px;
+                color: transparent;
+                background-image: linear-gradient(
+                    to top right,
+                    @indigo,
+                    @orange
+                );
+                background-clip: text;
             }
         }
         .cards {

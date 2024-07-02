@@ -9,7 +9,7 @@
     <Footer></Footer>
 </template>
 
-<script setup lang="ts" name="App">
+<script setup name="App">
     /* 引入 */
     import { ref } from "vue";
     import Header from "@/components/Header.vue";

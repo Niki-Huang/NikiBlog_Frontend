@@ -29,7 +29,7 @@
     </div>
 </template>
 
-<script setup lang="ts" name="Header">
+<script setup name="Header">
     /* 引入 */
     import { ref } from "vue";
     import { useRouter } from "vue-router";
@@ -45,7 +45,7 @@
 
     /* 事件 */
     // 编程式导航
-    function gotta(where: string) {
+    function gotta(where) {
         router.push({ path: where });
     }
     // 主题切换
