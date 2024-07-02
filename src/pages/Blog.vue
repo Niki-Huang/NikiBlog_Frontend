@@ -7,7 +7,8 @@
                 </svg>
                 <input
                     type="text"
-                    v-model="blog_name"
+                    :value="blog_name"
+                    @input="debounceSearch($event.target.value)"
                     placeholder="Print the blog's name that you wanna find"
                 />
             </div>
@@ -64,10 +65,11 @@
 <script setup name="Blog">
     /* 引入 */
     import { useRouter } from "vue-router";
+    import { ref, reactive, onMounted } from "vue";
+    import { debounce } from "lodash";
+    import toast from "@/utils/toast";
     import myaxios from "@/utils/myaxios";
     import formatTime from "@/utils/time";
-    import { ref, reactive, onMounted } from "vue";
-    import toast from "@/utils/toast";
 
     /* 实例 */
     const router = useRouter();
@@ -102,6 +104,10 @@
             },
         });
     }
+    // 防抖
+    let debounceSearch = debounce((value) => {
+        blog_name.value = value;
+    }, 500);
 
     /* 生命钩子 */
     onMounted(async () => {
