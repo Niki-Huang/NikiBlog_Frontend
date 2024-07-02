@@ -39,6 +39,7 @@
             >
                 <div class="cover">
                     <img :src="blog.coverUrl" alt="" />
+                    <div class="type" v-if="blog.type=='feature'">精选</div>
                 </div>
                 <div class="infos">
                     <div class="title">{{ blog.title }}</div>
@@ -228,7 +229,7 @@
                 border: 1px solid rgb(182, 182, 182);
                 border-radius: 6px;
                 transition: 0.2s all linear;
-                overflow: hidden; // 确保超出部分被隐藏
+                position: relative;
                 &:hover {
                     box-shadow: 0px 0px 20px 4px;
                     transform: scale(1.04);
@@ -236,8 +237,18 @@
                 }
                 .cover {
                     width: 100%;
+                    border-radius: 6px;
                     position: relative; // 确保 img 的绝对定位相对于 cover
                     padding-top: 56.25%; // 16:9 的比例，可以根据需要调整
+                    overflow: hidden; // 确保超出部分被隐藏
+                    .type {
+                        position: absolute;
+                        left: 8px;
+                        top: 8px;
+                        background-color: rgba(228, 133, 116, 0.8);
+                        padding: 10px;
+                        border-radius: 10px;
+                    }
                     img {
                         position: absolute;
                         // 让图片填满整个框
@@ -254,6 +265,7 @@
                     }
                 }
                 .infos {
+                    width: 100%;
                     padding: 10px 20px;
                     div {
                         padding: 2px;
