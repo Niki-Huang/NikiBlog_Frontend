@@ -39,7 +39,7 @@
             >
                 <div class="cover">
                     <img :src="blog.coverUrl" alt="" />
-                    <div class="type" v-if="blog.type=='feature'">精选</div>
+                    <div class="type" v-if="blog.type == 'feature'">精选</div>
                 </div>
                 <div class="infos">
                     <div class="title">{{ blog.title }}</div>
@@ -68,12 +68,14 @@
     import { useRouter } from "vue-router";
     import { ref, reactive, onMounted } from "vue";
     import { debounce } from "lodash";
+    import { useBlogInfoStore } from "@/store/bloginfo";
     import toast from "@/utils/toast";
     import myaxios from "@/utils/myaxios";
     import formatTime from "@/utils/time";
 
     /* 实例 */
     const router = useRouter();
+    const bloginfostore = useBlogInfoStore();
 
     /* 自定义变量 */
     let blogs_info = ref([]);
@@ -98,11 +100,9 @@
     }
     // 编程式导航
     function gottaDetail(bloginfo) {
+        bloginfostore.bloginfo = bloginfo;
         router.push({
             name: "Detail",
-            params: {
-                bloginfo: JSON.stringify(bloginfo),
-            },
         });
     }
     // 防抖

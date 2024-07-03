@@ -17,13 +17,16 @@
                 <div class="date">
                     发布时间：{{ formatTime(bloginfo.createTime) }}
                 </div>
-                <div class="viewer">
-                    <svg class="icon" aria-hidden="true">
-                        <use xlink:href="#icon-liulan"></use>
-                    </svg>
-                    <span>
-                        {{ bloginfo.viewCount }}
-                    </span>
+                <div class="right">
+                    <div class="edit" @click="editMode()">编辑</div>
+                    <div class="viewer">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-liulan"></use>
+                        </svg>
+                        <span>
+                            {{ bloginfo.viewCount }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -44,6 +47,7 @@
     import { useRoute } from "vue-router";
     import { MdPreview } from "md-editor-v3";
     import { useThemeStore } from "@/store/theme";
+    import { useBlogInfoStore } from "@/store/bloginfo";
     import toast from "@/utils/toast";
     import myaxios from "@/utils/myaxios";
     import formatTime from "@/utils/time";
@@ -51,9 +55,10 @@
     /* 实例 */
     const route = useRoute();
     const themeStore = useThemeStore();
+    let bloginfostore = useBlogInfoStore();
 
-    /* 路由参数 */
-    const bloginfo = JSON.parse(route.params.bloginfo);
+    /* props参数 */
+    let bloginfo = bloginfostore.bloginfo;
 
     /* 自定义参数 */
     let content = ref("");
@@ -70,6 +75,10 @@
     function typeFormat(type) {
         if (type === "none") return "普通";
         else return "精选";
+    }
+    // 进入/退出编辑模式
+    function editMode() {
+        toast.info("进入编辑模式");
     }
 
     /* 生命钩子 */
@@ -145,11 +154,25 @@
                 justify-content: space-between;
                 align-items: center;
                 padding: 0px 10px;
-                .viewer {
+                .right {
                     display: flex;
+                    justify-content: space-between;
                     align-items: center;
-                    span {
-                        margin-left: 10px;
+                    .edit {
+                        font-family: "微软雅黑";
+                        font-weight: 900;
+                        padding: 2px 10px;
+                        margin-right: 10px;
+                        background-color: rgb(166, 166, 166);
+                        border-radius: 6px;
+                        cursor: pointer;
+                    }
+                    .viewer {
+                        display: flex;
+                        align-items: center;
+                        span {
+                            margin-left: 10px;
+                        }
                     }
                 }
             }
