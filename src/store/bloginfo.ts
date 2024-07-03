@@ -11,6 +11,7 @@ export const useBlogInfoStore = defineStore(
         },
         actions: {
 
-        }
+        },
+        persist: true,
     }
 )

@@ -13,6 +13,7 @@ export const useThemeStore = defineStore(
                 this.theme_style = this.theme_style === 'dark' ? 'light' : 'dark'
                 document.documentElement.className = this.theme_style
             }
-        }
+        },
+        persist: true,
     }
 )
