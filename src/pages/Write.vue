@@ -21,9 +21,10 @@
         />
         <Publish
             :bid="bid"
-            :isVisible="isModalVisible"
+            :isVisible="isFormVisible"
             :onClose="handleFormClose"
             :onSubmit="saveBlog"
+            :formData="formData"
             :addPic="addPic"
         />
     </div>
@@ -31,18 +32,20 @@
 
 <script setup name="blog">
     /* 引入 */
-    import { ref, computed, reactive } from "vue";
-    import { useRoute, onBeforeRouteLeave } from "vue-router";
+    import { ref, computed, reactive, onMounted } from "vue";
+    import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
     import { MdEditor } from "md-editor-v3";
     import { useThemeStore } from "@/store/theme";
+    import { useBlogInfoStore } from "@/store/bloginfo";
     import myaxios from "@/utils/myaxios";
     import toast from "@/utils/toast";
-    import router from "@/router";
     import Publish from "@/components/Publish.vue";
 
     /* 实例 */
     const route = useRoute();
+    const router = useRouter();
     const themeStore = useThemeStore();
+    const bloginfostore = useBlogInfoStore();
 
     /* 路由参数变量 */
     const bid = ref(route.query.bid);
@@ -51,8 +54,16 @@
     let isSave = ref(false);
     let titleText = ref("");
     let markdownText = ref("");
-    let isModalVisible = ref(false);
+    let isFormVisible = ref(false);
     let picsUrl = reactive([]);
+    let formData = reactive({
+        tags: ["note"],
+        type: "none",
+        permission: "public",
+        status: "published",
+        description: "",
+        picUrl: "",
+    });
 
     /* 计算属性 */
     let theme_style = computed(() => themeStore.theme_style);
@@ -64,14 +75,14 @@
             if (titleText.value.trim() == "") throw "标题不能为空";
             else if (titleText.value.length > 255) throw "标题太长了";
             else if (markdownText.value.trim() == "") throw "文章内容不能为空";
-            isModalVisible.value = true;
+            isFormVisible.value = true;
         } catch (err) {
             toast.error(err);
         }
     }
     // 关闭表单
     function handleFormClose() {
-        isModalVisible.value = false;
+        isFormVisible.value = false;
     }
     // 保存博文
     async function saveBlog(formData) {
@@ -79,8 +90,8 @@
             // 解析数据
             const { tags, type, permission, status, description } = formData;
             // 数据处理、判断
-            const tags_str = formData.tags.join("|");
-            if (description > 255) {
+            const tags_str = tags.join("|");
+            if (description.length > 255) {
                 toast.error("描述信息太长了");
                 return;
             }
@@ -96,8 +107,9 @@
                 description,
             });
             isSave.value = true;
-            toast.success("Success to save");
-            isModalVisible.value = false;
+            if (route.query.mode == "e") toast.success("修改成功");
+            else toast.success("保存成功");
+            isFormVisible.value = false;
             router.push("/blog");
         } catch (err) {
             toast.error(err);
@@ -129,18 +141,30 @@
         picsUrl.push(picUrl);
     }
 
+    /* 生命钩子 */
+    onMounted(() => {
+        if (route.query.mode == "e") {
+            let bi = bloginfostore.bloginfo;
+            formData.tags = bi.tags.split("|");
+            formData.type = bi.type;
+            formData.permission = bi.permission;
+            formData.status = bi.status;
+            formData.description = bi.description;
+            formData.picUrl = bi.coverUrl;
+            titleText.value = bi.title;
+            markdownText.value = bloginfostore.content;
+        }
+    });
+
     /* 路由守卫 */
     onBeforeRouteLeave(async (to, from, next) => {
-        if (to.fullPath !== "/write" && !isSave.value) {
-            if (
-                confirm(
-                    "You haven't saved your ariticle yet, do you still wanna leave?"
-                )
-            ) {
+        if (!isSave.value) {
+            if (confirm("您还未保存，确定要离开吗？")) {
                 try {
-                    await myaxios.delete(`blogs/record/${bid.value}`);
+                    if (route.query.mode === "w")
+                        await myaxios.delete(`blogs/record/${bid.value}`);
                     if (picsUrl.length > 0)
-                        await myaxios.post(`imgs/picsDel`, { picsUrl });
+                        await myaxios.post(`imgs/picsDel`, { picArr:picsUrl });
                     next();
                 } catch (err) {
                     alert(err);

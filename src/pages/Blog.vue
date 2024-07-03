@@ -92,7 +92,7 @@
             const bid = data.bid;
             router.push({
                 path: "/write",
-                query: { bid },
+                query: { bid, mode: "w" },
             });
         } catch (err) {
             alert(err);

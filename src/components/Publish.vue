@@ -5,10 +5,18 @@
             <form @submit.prevent="onSubmit(formData)" class="form">
                 <div class="top">
                     <div class="left" @click="fileInput.click()">
-                        <svg class="icon" aria-hidden="true" v-if="!picUrl">
+                        <svg
+                            class="icon"
+                            aria-hidden="true"
+                            v-if="!formData.picUrl"
+                        >
                             <use xlink:href="#icon-tupian"></use>
                         </svg>
-                        <img v-if="picUrl" :src="picUrl" alt="" />
+                        <img
+                            v-if="formData.picUrl"
+                            :src="formData.picUrl"
+                            alt=""
+                        />
                         <input
                             type="file"
                             ref="fileInput"
@@ -135,24 +143,17 @@
         "onClose",
         "onSubmit",
         "addPic",
+        "formData",
     ]);
 
     /* 自定义参数 */
     const fileInput = ref();
-    const picUrl = ref("");
     const tag = ref("");
-    const formData = reactive({
-        tags: ["note"],
-        type: "none",
-        permission: "public",
-        status: "published",
-        description: "",
-    });
 
     /* 事件 */
     // 添加标签
     function addTag(value) {
-        if (formData.tags.length > 9) {
+        if (props.formData.tags.length > 9) {
             toast.error("标签太多了");
             return;
         } else if (value.trim() === "") {
@@ -161,36 +162,33 @@
         } else if (value.indexOf("|") != -1) {
             toast.error("不能包含特殊符号 |");
             return;
-        } else if (formData.tags.indexOf(value) != -1) {
+        } else if (props.formData.tags.indexOf(value) != -1) {
             toast.error("该tag已存在");
             return;
         }
-        formData.tags.push(value);
+        props.formData.tags.push(value);
         tag.value = "";
     }
     // 移除标签
     function removeTag(index) {
-        formData.tags.splice(index, 1);
+        console.log(111);
+        props.formData.tags.splice(index, 1);
     }
     // 上传封面
     async function sendCoverPic(event) {
-        const input = event.target
+        const input = event.target;
         if (input.files && input.files[0]) {
             const file = input.files[0];
             try {
                 const form = new FormData();
                 form.append("file", file);
                 form.append("isCover", "yes");
-                const res = await myaxios.post(
-                    `imgs/pic/${props.bid}`,
-                    form,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                    }
-                );
-                picUrl.value = res.data.url;
+                const res = await myaxios.post(`imgs/pic/${props.bid}`, form, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+                props.formData.picUrl = res.data.url;
                 props.addPic(res.data.url);
                 toast.success("封面上传成功");
             } catch (err) {

@@ -30,7 +30,7 @@
                 </div>
             </div>
         </div>
-        <div class="content">
+        <div class="mdpreview">
             <MdPreview
                 preview-theme="default"
                 editor-id="preview"
@@ -44,8 +44,8 @@
 <script setup name="Detail">
     /* 引入 */
     import { ref, computed, onMounted } from "vue";
-    import { useRoute } from "vue-router";
-    import { MdPreview } from "md-editor-v3";
+    import { useRouter } from "vue-router";
+    import { MdEditor, MdPreview } from "md-editor-v3";
     import { useThemeStore } from "@/store/theme";
     import { useBlogInfoStore } from "@/store/bloginfo";
     import toast from "@/utils/toast";
@@ -53,9 +53,9 @@
     import formatTime from "@/utils/time";
 
     /* 实例 */
-    const route = useRoute();
     const themeStore = useThemeStore();
     let bloginfostore = useBlogInfoStore();
+    let router = useRouter();
 
     /* props参数 */
     let bloginfo = bloginfostore.bloginfo;
@@ -76,9 +76,18 @@
         if (type === "none") return "普通";
         else return "精选";
     }
-    // 进入/退出编辑模式
+    // 进入编辑模式
     function editMode() {
-        toast.info("进入编辑模式");
+        try {
+            bloginfostore.content = content.value;
+            toast.info("进入编辑模式");
+            router.push({
+                path: "/write",
+                query: { bid: bloginfo.bid, mode: "e" },
+            });
+        } catch (err) {
+            toast.error(err);
+        }
     }
 
     /* 生命钩子 */
@@ -124,6 +133,12 @@
                     padding: 10px;
                     font-size: 30px;
                     border-radius: 10px;
+                }
+                .type_normal {
+                    background-color: gray + 33;
+                }
+                .type_feature {
+                    background-color: rgb(228, 133, 116);
                 }
             }
             .secondline {
@@ -177,39 +192,43 @@
                 }
             }
         }
-        .content {
+        .mdedit {
             width: 100%;
+            .md-editor {
+                height: 2000px !important;
+            }
+            margin-bottom: 60px;
         }
-    }
-    .md-editor {
-        background-color: transparent !important;
-        height: auto !important;
-    }
-    .type_normal {
-        background-color: gray + 33;
-    }
-    .type_feature {
-        background-color: rgb(228, 133, 116);
+        .mdpreview {
+            width: 100%;
+            .md-editor {
+                background-color: transparent !important;
+                height: auto !important;
+            }
+            margin-bottom: 60px;
+        }
     }
 </style>
 
 <style lang="less">
     @import "@/assets/less/index.less";
-    div.default-theme,
-    span.md-editor-code-block {
-        font-size: 20px !important;
-    }
-    div.default-theme {
-        font-family: "微软雅黑";
-        table {
-            width: 100%;
-            // outline: 4px dashed gray;
-            thead tr th {
-                padding: 20px;
-                background-color: #ddd;
-            }
-            tbody tr td {
-                padding: 14px;
+    .mdpreview {
+        div.default-theme,
+        span.md-editor-code-block {
+            font-size: 20px !important;
+        }
+        div.default-theme {
+            font-family: "微软雅黑";
+            table {
+                width: 100%;
+                // outline: 4px dashed gray;
+                thead tr th {
+                    padding: 20px;
+                    background-color: #ddd;
+                }
+                tbody tr td {
+                    padding: 14px;
+                }
             }
         }
     }
