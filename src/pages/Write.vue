@@ -181,6 +181,7 @@
         justify-content: center;
         flex-wrap: wrap;
         margin: 0px auto;
+        padding-bottom: 20px;
         width: @container-width - 60px;
         position: relative;
         height: 90%;

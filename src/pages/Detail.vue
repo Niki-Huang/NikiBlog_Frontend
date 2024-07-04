@@ -18,7 +18,8 @@
                     发布时间：{{ formatTime(bloginfo.createTime) }}
                 </div>
                 <div class="right">
-                    <div class="edit" @click="editMode()">编辑</div>
+                    <div class="edit" @click="editMode()">编 辑</div>
+                    <div class="del" @click="delCircle()">删 除</div>
                     <div class="viewer">
                         <svg class="icon" aria-hidden="true">
                             <use xlink:href="#icon-liulan"></use>
@@ -45,7 +46,7 @@
     /* 引入 */
     import { ref, computed, onMounted } from "vue";
     import { useRouter } from "vue-router";
-    import { MdEditor, MdPreview } from "md-editor-v3";
+    import { MdPreview } from "md-editor-v3";
     import { useThemeStore } from "@/store/theme";
     import { useBlogInfoStore } from "@/store/bloginfo";
     import toast from "@/utils/toast";
@@ -85,6 +86,17 @@
                 path: "/write",
                 query: { bid: bloginfo.bid, mode: "e" },
             });
+        } catch (err) {
+            toast.error(err);
+        }
+    }
+    // 删除文章
+    async function delCircle() {
+        if (!confirm("确定要删除这篇文章吗？")) return;
+        try {
+            await myaxios.delete(`/blogs/${bloginfo.bid}`);
+            toast.success("删除成功");
+            router.push('/blog')
         } catch (err) {
             toast.error(err);
         }
@@ -173,14 +185,14 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    .edit {
+                    .edit,
+                    .del {
                         font-family: "微软雅黑";
-                        font-weight: 900;
                         padding: 2px 10px;
                         margin-right: 10px;
-                        background-color: rgb(166, 166, 166);
                         border-radius: 6px;
                         cursor: pointer;
+                        border: 1px dashed gray;
                     }
                     .viewer {
                         display: flex;

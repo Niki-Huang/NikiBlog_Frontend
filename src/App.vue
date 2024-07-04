@@ -1,11 +1,12 @@
 <template>
     <Header></Header>
-    <RouterView v-slot="{ Component, route }">
+    <!-- <RouterView v-slot="{ Component, route }">
         <KeepAlive :include="['Blog']">
             <component :is="Component" v-if="route.meta.keepAlive" />
         </KeepAlive>
         <component :is="Component" v-if="!route.meta.keepAlive" />
-    </RouterView>
+    </RouterView> -->
+    <RouterView></RouterView>
     <Footer></Footer>
 </template>
 
