@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '@/pages/Home.vue'
 import Blog from "@/pages/Blog.vue"
 import Write from "@/pages/Write.vue"
@@ -7,8 +7,8 @@ import toast from '@/utils/toast'
 import { useIdentifyStore } from '@/store/identify'
 
 const router = createRouter({
-    // 路由器的工作模式选用history
-    history: createWebHistory(),
+    // 路由器的工作模式选用hash
+    history: createWebHashHistory(),
     // 创建一个个路由规则
     routes: [
         {
