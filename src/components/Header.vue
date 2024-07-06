@@ -4,8 +4,15 @@
         <!-- 版心 -->
         <div class="container">
             <!-- 头像 -->
-            <div class="left">
-                <div class="head-sculpture"></div>
+            <div class="left" v-if="identify.isLogged">
+                <div class="head-sculpture" @click="showLogForm"></div>
+            </div>
+            <div class="left" v-if="!identify.isLogged">
+                <div class="niming" @click="showLogForm">
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-nimingicon"></use>
+                    </svg>
+                </div>
             </div>
             <!-- 导航 -->
             <div class="middle">
@@ -13,8 +20,8 @@
                     <div @click="gotta('/')">HOME</div>
                     <div @click="gotta('/blog')">BLOG</div>
                     <div>PROJECT</div>
-                    <div>FRIEND</div>
-                    <div @click="gotta('/test')">TEST</div>
+                    <div>TOOLS</div>
+                    <div>ABOUTME</div>
                 </div>
             </div>
             <!-- 菜单 -->
@@ -31,17 +38,20 @@
 
 <script setup name="Header">
     /* 引入 */
-    import { ref } from "vue";
+    import { computed, onBeforeMount, onMounted, ref } from "vue";
     import { useRouter } from "vue-router";
     import { useThemeStore } from "@/store/theme";
     import emitter from "@/utils/emitter";
-
-    /* 自定义变量 */
-    const theIcon = ref("#icon-moon");
+    import { useIdentifyStore } from "@/store/identify";
+    import toast from "@/utils/toast";
 
     /* 实例 */
     const router = useRouter();
     const themeStore = useThemeStore();
+    const identify = useIdentifyStore();
+
+    /* 自定义变量 */
+    const theIcon = ref("#icon-moon");
 
     /* 事件 */
     // 编程式导航
@@ -53,6 +63,10 @@
         if (theIcon.value === "#icon-sun") theIcon.value = "#icon-moon";
         else theIcon.value = "#icon-sun";
         themeStore.changeThemeForCreating();
+    }
+    // 显示登录框
+    async function showLogForm() {
+        identify.isShow = true;
     }
 </script>
 
@@ -91,6 +105,25 @@
             border-radius: 25px;
             cursor: pointer;
             transition: 0.2s all linear;
+            &:hover {
+                transform: scale(1.2);
+            }
+        }
+        .niming {
+            margin: 0 auto;
+            width: 50px;
+            height: 50px;
+            background-size: 50px 50px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.2s all linear;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            svg {
+                width: 48px;
+                height: 48px;
+            }
             &:hover {
                 transform: scale(1.2);
             }

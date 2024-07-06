@@ -33,7 +33,12 @@
 <script setup name="blog">
     /* 引入 */
     import { ref, computed, reactive, onMounted } from "vue";
-    import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
+    import {
+        useRoute,
+        useRouter,
+        onBeforeRouteLeave,
+        onBeforeRouteUpdate,
+    } from "vue-router";
     import { MdEditor } from "md-editor-v3";
     import { useThemeStore } from "@/store/theme";
     import { useBlogInfoStore } from "@/store/bloginfo";
@@ -164,7 +169,7 @@
                     if (route.query.mode === "w")
                         await myaxios.delete(`blogs/record/${bid.value}`);
                     if (picsUrl.length > 0)
-                        await myaxios.post(`imgs/picsDel`, { picArr:picsUrl });
+                        await myaxios.post(`imgs/picsDel`, { picArr: picsUrl });
                     next();
                 } catch (err) {
                     alert(err);

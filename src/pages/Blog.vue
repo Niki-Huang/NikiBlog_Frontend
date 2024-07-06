@@ -12,7 +12,7 @@
                     placeholder="Print the blog's name that you wanna find"
                 />
             </div>
-            <div class="right" @click="gottaWrite()">Publish</div>
+            <div class="right" @click="gottaWrite()" v-if="identify.isLogged">Publish</div>
         </div>
         <div class="tags">
             <span>Hot tags:</span>
@@ -38,7 +38,7 @@
                 @click="gottaDetail(blog)"
             >
                 <div class="cover">
-                    <img :src="blog.coverUrl" alt="" />
+                    <img :src="blog.coverUrl" alt="" loading="lazy" />
                     <div class="type" v-if="blog.type == 'feature'">精选</div>
                 </div>
                 <div class="infos">
@@ -72,10 +72,12 @@
     import toast from "@/utils/toast";
     import myaxios from "@/utils/myaxios";
     import formatTime from "@/utils/time";
+    import { useIdentifyStore } from "@/store/identify";
 
     /* 实例 */
     const router = useRouter();
     const bloginfostore = useBlogInfoStore();
+    const identify = useIdentifyStore();
 
     /* 自定义变量 */
     let blogs_info = ref([]);
@@ -149,7 +151,7 @@
             display: flex;
             justify-content: space-between;
             .left {
-                width: 80%;
+                width: 100%;
                 border: 1px solid gray;
                 padding: 10px;
                 border-radius: 10px;
@@ -169,7 +171,8 @@
                 }
             }
             .right {
-                width: 15%;
+                width: 160px;
+                margin-left: 20px;
                 padding: 10px;
                 border-radius: 10px;
                 line-height: 32px;

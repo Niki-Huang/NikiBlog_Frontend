@@ -18,8 +18,20 @@
                     发布时间：{{ formatTime(bloginfo.createTime) }}
                 </div>
                 <div class="right">
-                    <div class="edit" @click="editMode()">编 辑</div>
-                    <div class="del" @click="delCircle()">删 除</div>
+                    <div
+                        class="edit"
+                        @click="editMode()"
+                        v-if="identify.isLogged"
+                    >
+                        编 辑
+                    </div>
+                    <div
+                        class="del"
+                        @click="delCircle()"
+                        v-if="identify.isLogged"
+                    >
+                        删 除
+                    </div>
                     <div class="viewer">
                         <svg class="icon" aria-hidden="true">
                             <use xlink:href="#icon-liulan"></use>
@@ -52,10 +64,12 @@
     import toast from "@/utils/toast";
     import myaxios from "@/utils/myaxios";
     import formatTime from "@/utils/time";
+    import { useIdentifyStore } from "@/store/identify";
 
     /* 实例 */
     const themeStore = useThemeStore();
     let bloginfostore = useBlogInfoStore();
+    const identify = useIdentifyStore();
     let router = useRouter();
 
     /* props参数 */
@@ -96,7 +110,7 @@
         try {
             await myaxios.delete(`/blogs/${bloginfo.bid}`);
             toast.success("删除成功");
-            router.push('/blog')
+            router.push("/blog");
         } catch (err) {
             toast.error(err);
         }
@@ -225,8 +239,13 @@
 <style lang="less">
     @import "@/assets/less/index.less";
     .mdpreview {
+        code.language-bash {
+            padding-top: 18px !important;
+            padding-left: 80px !important;
+        }
         div.default-theme,
-        span.md-editor-code-block {
+        span.md-editor-code-block,
+        span[rn-wrapper] {
             font-size: 20px !important;
         }
         div.default-theme {

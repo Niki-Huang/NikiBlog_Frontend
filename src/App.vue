@@ -8,13 +8,31 @@
     </RouterView> -->
     <RouterView></RouterView>
     <Footer></Footer>
+    <Login></Login>
 </template>
 
 <script setup name="App">
     /* 引入 */
-    import { ref } from "vue";
     import Header from "@/components/Header.vue";
     import Footer from "@/components/Footer.vue";
+    import Login from "@/components/Login.vue";
+    import toast from "./utils/toast";
+    import { onBeforeMount } from "vue";
+    import { useIdentifyStore } from "./store/identify";
+
+    /* 实例 */
+    const identify = useIdentifyStore();
+
+    /* 生命钩子 */
+    // 做一下身份验证
+    onBeforeMount(async () => {
+        try {
+            await identify.verify();
+            if (identify.isLogged) toast.success("你好，管理员");
+        } catch (err) {
+            toast.error(err);
+        }
+    });
 </script>
 
 <style lang="less">
