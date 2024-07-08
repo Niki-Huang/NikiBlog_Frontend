@@ -1,4 +1,4 @@
-const ip = "192.168.2.110"
+const ip = "localhost"
 
 const SERVERCONFIG = {
     PATH: `http://${ip}:4400/`,
